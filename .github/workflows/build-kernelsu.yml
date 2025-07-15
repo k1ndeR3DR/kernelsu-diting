@@ -34,8 +34,7 @@ jobs:
           cd clang
           wget https://software.frc971.org/Build-Dependencies/github.com/llvm/llvm-project/releases/download/llvmorg-17.0.2/clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
           tar -xf clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
-          mv clang+llvm-17.0.2-*/bin/clang* bin/
-          mv clang+llvm-17.0.2-*/lib64 lib/
+          mv clang+llvm-17.0.2-*/* ./
 
       - name: Build kernel
         run: |
@@ -46,7 +45,7 @@ jobs:
           make vendor/diting_defconfig
           make -j$(nproc)
 
-      - name: Upload compiled kernel Image.gz-dtb
+      - name: Upload compiled Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
           name: image-gz-dtb
