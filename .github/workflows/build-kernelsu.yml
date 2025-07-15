@@ -42,7 +42,7 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
-          make vendor/diting_defconfig
+          make diting_defconfig
           make -j$(nproc)
 
       - name: Upload compiled Image.gz-dtb
