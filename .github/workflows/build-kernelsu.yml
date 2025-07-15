@@ -37,7 +37,7 @@ jobs:
           tar -xf clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
           mv clang+llvm-17.0.2-*/* ./
 
-      - name: Build kernel (Image.gz-dtb only, no WERROR)
+      - name: Build kernel (Image.gz-dtb only, with KCFLAGS)
         run: |
           cd kernel
           export ARCH=arm64
@@ -47,7 +47,7 @@ jobs:
           export CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
           export CC=clang
           make defconfig
-          make Image.gz-dtb -j$(nproc) WERROR=0
+          make KCFLAGS=-Wno-error Image.gz-dtb -j$(nproc)
 
       - name: Upload compiled Image.gz-dtb
         uses: actions/upload-artifact@v4
