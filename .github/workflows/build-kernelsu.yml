@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install dependencies
@@ -16,7 +16,7 @@ jobs:
           sudo apt update
           sudo apt install -y git bc bison flex build-essential libssl-dev \
             libelf-dev ccache python3 unzip lz4 libncurses5-dev \
-            libncursesw5-dev wget curl
+            libncursesw5-dev wget curl xz-utils
 
       - name: Clone kernel source
         run: |
@@ -27,14 +27,15 @@ jobs:
           cd kernel
           curl -LSs https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh | bash -
 
-      - name: Download and extract Clang 17
+      - name: Download and extract Clang 17.0.2
         run: |
           cd kernel
           mkdir clang
           cd clang
-          wget https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.2/clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-          tar -xf clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-          mv clang+llvm-17.0.2-*/* ./
+          wget https://software.frc971.org/Build-Dependencies/github.com/llvm/llvm-project/releases/download/llvmorg-17.0.2/clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
+          tar -xf clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
+          mv clang+llvm-17.0.2-*/bin/clang* bin/
+          mv clang+llvm-17.0.2-*/lib64 lib/
 
       - name: Build kernel
         run: |
@@ -45,7 +46,7 @@ jobs:
           make vendor/diting_defconfig
           make -j$(nproc)
 
-      - name: Upload Image.gz-dtb
+      - name: Upload compiled kernel Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
           name: image-gz-dtb
