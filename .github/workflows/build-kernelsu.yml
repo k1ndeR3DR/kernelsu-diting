@@ -18,14 +18,14 @@ jobs:
             libelf-dev ccache python3 unzip lz4 libncurses5-dev \
             libncursesw5-dev clang wget
 
-      - name: Clone Kernel source
+      - name: Clone kernel source
         run: |
           git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
 
-      - name: Clone KernelSU into kernel directory
+      - name: Clone stable KernelSU (v11200) into kernel directory
         run: |
           cd kernel
-          git clone https://github.com/tiann/KernelSU.git KernelSU --depth=1
+          git clone --branch v11200 https://github.com/tiann/KernelSU.git KernelSU --depth=1
 
       - name: Apply KernelSU patch
         run: |
@@ -42,7 +42,7 @@ jobs:
           make vendor/diting_defconfig
           make -j$(nproc)
 
-      - name: Upload kernel Image.gz-dtb
+      - name: Upload Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
           name: image-gz-dtb
