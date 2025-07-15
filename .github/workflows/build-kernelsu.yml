@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Install dependencies
@@ -42,10 +42,10 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
-          make diting_defconfig
+          make msm.diting_defconfig
           make -j$(nproc)
 
-      - name: Upload compiled Image.gz-dtb
+      - name: Upload Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
           name: image-gz-dtb
