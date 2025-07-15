@@ -20,14 +20,14 @@ jobs:
             libncurses5-dev libncursesw5-dev clang wget
 
       - name: Clone kernel source & KernelSU
-        run: |
-          git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
-          git clone https://github.com/tiann/KernelSU.git kernelsu --depth=1
+      run: |
+    git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
+    git clone https://github.com/tiann/KernelSU.git kernel/KernelSU --depth=1
 
       - name: Apply KernelSU patch
-        run: |
-          cd kernel
-          bash ../kernelsu/tools/patch.sh
+      run: |
+    cd kernel
+    bash KernelSU/tools/patch.sh
 
       - name: Setup environment & build kernel
         run: |
