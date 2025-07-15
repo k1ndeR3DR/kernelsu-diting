@@ -36,14 +36,14 @@ jobs:
           tar -xf clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz
           mv clang+llvm-17.0.2-*/* ./
 
-      - name: Build kernel
+      - name: Build kernel (Image.gz-dtb only)
         run: |
           cd kernel
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
           make defconfig
-          make -j$(nproc)
+          make Image.gz-dtb -j$(nproc)
 
       - name: Upload compiled Image.gz-dtb
         uses: actions/upload-artifact@v4
