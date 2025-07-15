@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install dependencies
@@ -22,28 +22,30 @@ jobs:
         run: |
           git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
 
-      - name: Apply KernelSU using setup.sh
+      - name: Apply KernelSU patch (latest stable)
         run: |
           cd kernel
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
-            - name: Setup Clang & build kernel
+      - name: Download and extract Google Clang
         run: |
           cd kernel
           mkdir clang
           cd clang
           curl -O https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r450784d.tar.gz
           tar -xf clang-r450784d.tar.gz
-          cd ..
+
+      - name: Build kernel
+        run: |
+          cd kernel
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
           make vendor/diting_defconfig
           make -j$(nproc)
 
-
-      - name: Upload compiled kernel
+      - name: Upload compiled kernel Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
-          name: Image.gz-dtb
+          name: image-gz-dtb
           path: kernel/arch/arm64/boot/Image.gz-dtb
