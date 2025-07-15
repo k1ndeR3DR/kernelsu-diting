@@ -22,12 +22,10 @@ jobs:
         run: |
           git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
 
-      - name: Clone KernelSU into kernel directory and checkout known-good commit
+      - name: Clone KernelSU into kernel directory (latest HEAD)
         run: |
           cd kernel
-          git clone https://github.com/tiann/KernelSU.git KernelSU
-          cd KernelSU
-          git checkout 6f8f4a1a6b583c346e0b5f2e3562ef45c72e6d76  # commit from April 2024 where patch.sh exists
+          git clone https://github.com/tiann/KernelSU.git KernelSU --depth=1
 
       - name: Apply KernelSU patch
         run: |
