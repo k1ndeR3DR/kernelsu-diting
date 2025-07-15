@@ -21,7 +21,7 @@ jobs:
 
       - name: Clone kernel source & KernelSU
         run: |
-          git clone https://github.com/dvtns/android_kernel_xiaomi_diting.git kernel --depth=1
+          git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
           git clone https://github.com/tiann/KernelSU.git kernelsu --depth=1
 
       - name: Apply KernelSU patch
