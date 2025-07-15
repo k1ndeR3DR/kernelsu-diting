@@ -27,15 +27,20 @@ jobs:
           cd kernel
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
-      - name: Setup Clang & build kernel
+            - name: Setup Clang & build kernel
         run: |
           cd kernel
-          git clone https://github.com/ClangBuiltLinux/linux-toybox clang --depth=1
+          mkdir clang
+          cd clang
+          curl -O https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r450784d.tar.gz
+          tar -xf clang-r450784d.tar.gz
+          cd ..
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
           make vendor/diting_defconfig
           make -j$(nproc)
+
 
       - name: Upload compiled kernel
         uses: actions/upload-artifact@v4
