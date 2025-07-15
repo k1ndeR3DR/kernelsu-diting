@@ -18,10 +18,14 @@ jobs:
             libelf-dev ccache python3 unzip lz4 libncurses5-dev \
             libncursesw5-dev clang wget
 
-      - name: Clone kernel and KernelSU
+      - name: Clone Kernel source
         run: |
           git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
-          git clone https://github.com/tiann/KernelSU.git kernel/KernelSU --depth=1
+
+      - name: Clone KernelSU into kernel directory
+        run: |
+          cd kernel
+          git clone https://github.com/tiann/KernelSU.git KernelSU --depth=1
 
       - name: Apply KernelSU patch
         run: |
