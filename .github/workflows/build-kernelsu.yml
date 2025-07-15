@@ -1,0 +1,67 @@
+name: build KernelSU Next for diting
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git bc bison flex build-essential libssl-dev \
+            libelf-dev ccache python3 python-is-python3 unzip lz4 \
+            libncurses5-dev libncursesw5-dev clang wget
+
+      - name: Clone kernel source & KernelSU
+        run: |
+          git clone https://github.com/dvtns/android_kernel_xiaomi_diting.git kernel --depth=1
+          git clone https://github.com/tiann/KernelSU.git kernelsu --depth=1
+
+      - name: Apply KernelSU patch
+        run: |
+          cd kernel
+          bash ../kernelsu/tools/patch.sh
+
+      - name: Setup environment & build kernel
+        run: |
+          cd kernel
+          git clone https://github.com/ClangBuiltLinux/linux-toybox clang --depth=1
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export PATH="$PWD/clang/bin:$PATH"
+          make vendor/diting_defconfig
+          make -j$(nproc)
+
+      - name: Prepare ramdisk & mkbootimg
+        run: |
+          mkdir output
+          cd ..
+          # Распакуй сюда свой оригинальный boot.img
+          if [ ! -f boot.img ]; then
+            echo "ERROR: please upload original boot.img as artifact"
+            exit 1
+          fi
+          sudo apt install mkbootimg
+          mkdir unpack
+          magiskboot unpack boot.img || { echo "请安装 magiskboot"; exit 1; }
+          mv kernel/kernel kernel.orig
+          mv ramdisk.cpio ramdisk.orig.cpio
+          cp kernel/arch/arm64/boot/Image.gz-dtb Image.gz-dtb
+          mkbootimg --kernel Image.gz-dtb \
+                    --ramdisk ramdisk.orig.cpio \
+                    --cmdline "$(magiskboot info header | grep 'cmdline:' | sed 's/cmdline: //')" \
+                    --base "$(magiskboot info header | grep 'base:' | sed 's/base: //')" \
+                    --output output/new_boot.img
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: boot-img
+          path: output/new_boot.img
