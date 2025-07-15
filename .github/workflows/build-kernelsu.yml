@@ -6,18 +6,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Install deps
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y git bc bison flex build-essential libssl-dev \
             libelf-dev ccache python3 unzip lz4 libncurses5-dev \
             libncursesw5-dev wget curl xz-utils
 
-      - name: Clone kernel
-        run: git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
+      - name: Clone kernel source
+        run: |
+          git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
 
       - name: Apply KernelSU patch
         run: |
@@ -39,11 +42,11 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="$PWD/clang/bin:$PATH"
-          make KBUILD_DEFCONFIG=build.config.msm.diting
+          make defconfig
           make -j$(nproc)
 
-      - name: Upload kernel
+      - name: Upload compiled Image.gz-dtb
         uses: actions/upload-artifact@v4
         with:
-          name: Image.gz-dtb
+          name: image-gz-dtb
           path: kernel/arch/arm64/boot/Image.gz-dtb
