@@ -22,18 +22,18 @@ jobs:
         run: |
           git clone https://github.com/Xiaomi-Diting-Development/android_kernel_xiaomi_diting.git kernel --depth=1
 
-      - name: Apply KernelSU patch (latest stable)
+      - name: Apply KernelSU patch (setup.sh)
         run: |
           cd kernel
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
-      - name: Download and extract Google Clang
+      - name: Download and extract Clang
         run: |
           cd kernel
           mkdir clang
           cd clang
-          curl -O https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r450784d.tar.gz
-          tar -xf clang-r450784d.tar.gz
+          curl -L -o clang.tar.gz https://github.com/ZSX330/Clang-for-Android/releases/download/17.0.2/clang-17.0.2.tar.gz
+          tar -xf clang.tar.gz
 
       - name: Build kernel
         run: |
